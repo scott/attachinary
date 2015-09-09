@@ -7,7 +7,7 @@
       indicateProgress: true
       invalidFormatMessage: 'Invalid file format'
       template: """
-        <ul>
+        <ul class='list-inline attachinary-thumbnails'>
           <% for(var i=0; i<files.length; i++){ %>
             <li>
               <% if(files[i].resource_type == "raw") { %>
@@ -16,7 +16,7 @@
                 <img
                   src="<%= $.cloudinary.url(files[i].public_id, { "version": files[i].version, "format": 'jpg', "crop": 'fill', "width": 75, "height": 75 }) %>"
                   alt="" width="75" height="75" />
-              <% } %>
+              <% } %><br/>
               <a href="#" data-remove="<%= files[i].public_id %>">Remove</a>
             </li>
           <% } %>
@@ -166,6 +166,11 @@
           @removeFile $(event.target).data('remove')
 
         @$filesContainer.show()
+
+        # Added this because it was not working from app.js for new images
+        $('.attachinary-thumbnails li img').on 'click', ->
+          quill.insertEmbed(quill.getLength(), 'image', $(this).attr('src').replace(',h_75,w_75',''))
+
       else
         @$filesContainer.append @makeHiddenField(null)
         @$filesContainer.hide()
